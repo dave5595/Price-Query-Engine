@@ -20,7 +20,6 @@ class PriceQuoteGenerator(timestampDistributionOffset: Long = 1) {
     private val start: LocalDateTime = end.minusHours(timestampDistributionOffset)
     private val timestampRandomizer: RandomDateTimeGenerator = RandomDateTimeGenerator(start, end)
     private val bidAskPriceGenerator: BidAskPriceGenerator = BidAskPriceGenerator()
-    private val dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
     private val random = Random()
 
     fun generate(amount: Int): Array<PriceQuote> {
@@ -39,7 +38,7 @@ class PriceQuoteGenerator(timestampDistributionOffset: Long = 1) {
             quote.symbol = symbol
             quote.bidPrice = bidAskPair.bid
             quote.askPrice = bidAskPair.ask
-            quote.timestampMS = LocalDateTime.parse(timestampRandomizer.randomize(), dtf).toInstant(ZoneOffset.UTC).toEpochMilli()
+            quote.timestampMS = LocalDateTime.parse(timestampRandomizer.randomize(), DataLoader.dtf).toInstant(ZoneOffset.UTC).toEpochMilli()
         }
         return quotes
     }

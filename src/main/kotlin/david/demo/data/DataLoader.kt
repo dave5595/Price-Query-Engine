@@ -11,7 +11,8 @@ import java.time.format.DateTimeFormatter
 class DataLoader {
 
     companion object {
-        private val dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
+        const val DATE_TIME_PATTERN: String = "yyyyMMddHHmmssSSS"
+        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)
 
         fun fromCsv(filepath: String): List<PriceQuote> {
             return try {
@@ -29,7 +30,7 @@ class DataLoader {
             while (reader.readLine()?.also { line = it; } != null) {
                 val fields = line
                     .split(",")
-                    .dropLastWhile (String::isEmpty)
+                    .dropLastWhile(String::isEmpty)
                 if (fields.size == 5) {
                     val quote = PriceQuote()
                     quote.source = fields[0]

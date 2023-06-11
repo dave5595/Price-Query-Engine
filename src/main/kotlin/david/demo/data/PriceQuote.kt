@@ -12,7 +12,6 @@ import david.demo.common.SupportedSources.Companion.DBS
 import david.demo.common.SupportedSources.Companion.REUTERS
 import david.demo.common.SupportedSources.Companion.UOB
 import david.demo.core.SidedPrice
-import david.demo.core.Output
 import david.demo.core.Side
 
 class PriceQuote {
@@ -22,12 +21,6 @@ class PriceQuote {
     var bidPrice: Double = Double.MIN_VALUE
     var timestampMS: Long = Long.MIN_VALUE
 
-    fun toPriceBook(): Output {
-        val pb = Output()
-        pb.accept(SidedPrice(source, symbol, Side.Bid, bidPrice, timestampMS))
-        pb.accept(SidedPrice(source, symbol, Side.Ask, askPrice, timestampMS))
-        return pb
-    }
 
     fun toSidedPriceList(): List<SidedPrice> {
         val priceList: MutableList<SidedPrice> = ArrayList()

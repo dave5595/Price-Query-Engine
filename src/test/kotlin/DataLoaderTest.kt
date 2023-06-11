@@ -5,11 +5,17 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class DataLoaderTest {
 
     @Test
-    fun shouldParseCsvCorrectly(){
+    fun shouldParseCsvCorrectly() {
         val pathName = "test-output.csv"
         val quoteGenerator = PriceQuoteGenerator()
         val quotes0 = quoteGenerator.generate(151)

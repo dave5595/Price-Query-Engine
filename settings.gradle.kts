@@ -1,3 +1,2 @@
-
-rootProject.name = "PriceAnalyzer"
+rootProject.name = "PriceQueryEngine"
 
