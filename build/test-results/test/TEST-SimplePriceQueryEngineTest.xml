@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SimplePriceQueryEngineTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-06-11T04:32:44" hostname="DAVID" time="0.237">
+  <properties/>
+  <testcase name="shouldFilterWhereAgeMatchesConditionHandlingRepeatingQueryGroupsSortingBidAsksInDescOrder()" classname="SimplePriceQueryEngineTest" time="0.237"/>
+  <system-out><![CDATA[nowMS-49(1686486764280) <= nowMs-50 (1686486764279) = false
+-----------------------------------------------------------------------------------------------------------------------------------------
+|	                              Bids                              |                              Asks                              	|
+-----------------------------------------------------------------------------------------------------------------------------------------
+|	Source    	Symbol    	Side 	Price     	Timestamp        	|	Source    	Symbol    	Side 	Price     	Timestamp        	|
+-----------------------------------------------------------------------------------------------------------------------------------------
+|	dbs       	USDJPY    	Bid  	2.957     	1686486764314    	|	dbs       	USDJPY    	Ask  	3.958     	1686486764314    	|
+|	dbs       	EURUSD    	Bid  	2.956     	1686486764319    	|	barclays  	USDJPY    	Ask  	3.942     	1686486764280    	|
+|	barclays  	USDJPY    	Bid  	2.941     	1686486764280    	|	dbs       	EURUSD    	Ask  	3.000     	1686486764319    	|
+|	dbs       	USDCAD    	Bid  	2.930     	1686486764309    	|	dbs       	USDCAD    	Ask  	2.940     	1686486764309    	|
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
