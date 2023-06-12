@@ -9,7 +9,7 @@ Query engine that supports high-level string query filtering.
 3. `InputParser` validates the input queries and converts them into an intermediate `List<RawQuery>`
 4. The `List<RawQuery>` is then further reduced into a `Predicate`, using the keys which maps to the fields that needs to be included in the `Predicate`. Each query maps to its own `Predicate`, and these individual query `Predicates` are joined by an `AND` operator to create a single `Predicate`. Multiple values of a single query are combined using an OR operator. (Note: This imposes a limitation on the application to only be able to support conjunctive queries(e.g `age >= lower bound && age <= upper bound`), disjunctive queries(e.g: `age < lower bound || age > upper bound`) will not yield the expected results using this logic)
 5. The Predicate is then applied to the `List<SidedPrice>` 
-6. Result is represented as an Output object that can be configured to output in CSV/Table format
+6. Result is represented as an `Output` that can be configured to output its `toString` in CSV/Table format
 
 ## Assumptions
 
@@ -17,7 +17,7 @@ The engine assumes the following about the input data:
 
 1. The timestamp provided conforms to the fixed pattern of `yyyyMMddHHmmssSSS`.
 2. The query string will only contain `;` to separate queries and `,` to separate multiple values in a single query.
-3. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. For example, `bidPx > avgBidPx` and `askPx > avgAskPx`.
+3. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. For example, the percentage off the average price for a bid sided price is calculated using the following formula `((bidPx - avgBidPx) / avgBidPx) * 100` and similarly for percentage off the average price for an ask sided price is calculated using `((askPx - avgAskPx) / avgAskPx) * 100`.
 
 ## Features
 
