@@ -11,6 +11,19 @@ Query engine that supports high-level string query filtering.
 5. The Predicate is then applied to the `List<SidedPrice>` 
 6. Result is represented as an `Output` that can be configured to output its `toString` in CSV/Table format
 
+## How to Run the Tests
+
+To run the tests, follow these steps:
+
+1. Run the following command in the terminal: `./gradlew test`. Alternatively, you can use IntelliJ's Gradle taskbar to run the tests.
+
+These are the location of the test files:
+
+- Core logic test: `src/test/kotlin/SimplePriceQueryEngineTest`
+- Input parsing and data loading tests:
+   - `src/test/kotlin/DataLoaderTest`
+   - `src/test/kotlin/InputParserTest`
+
 ## Assumptions
 
 The engine assumes the following about the input data:
