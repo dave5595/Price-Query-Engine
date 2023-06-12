@@ -11,8 +11,6 @@ import java.time.ZoneOffset
 import java.util.function.Predicate
 import java.util.function.Supplier
 
-//Support queries with multi values
-//Support multiple repeating groups; price<0.45;price>0.41; limitations: no support for repeating groups with = as comparators
 open class RawQuery(val key: Key, val comparator: String, val values: Array<String>) {
     enum class Key(val value: String) {
         Source("source") {
@@ -200,8 +198,6 @@ open class RawQuery(val key: Key, val comparator: String, val values: Array<Stri
         }
 
         companion object {
-            val greaterOrGreaterOrEquals = "^(\\s?)>=?(\\s?)\$".toRegex()
-            val lesserOrLesserOrEquals = "^(\\s?)<=?(\\s?)\$".toRegex()
             private val values = values()
             private val valueMap = values.associateBy(Key::value)
             private val keys = values.map { it.value }
