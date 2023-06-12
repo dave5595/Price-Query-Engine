@@ -1,15 +1,16 @@
 package david.demo.data
 
-import david.demo.common.SupportedSources.Companion.BARCLAYS
-import david.demo.common.SupportedSources.Companion.CITI
-import david.demo.common.SupportedSources.Companion.DBS
-import david.demo.common.SupportedSources.Companion.REUTERS
-import david.demo.common.SupportedSources.Companion.UOB
-import david.demo.common.SupportedCurrencyPairs.Companion.EUR_USD
-import david.demo.common.SupportedCurrencyPairs.Companion.GBP_USD
-import david.demo.common.SupportedCurrencyPairs.Companion.AUD_USD
-import david.demo.common.SupportedCurrencyPairs.Companion.USD_CAD
-import david.demo.common.SupportedCurrencyPairs.Companion.USD_JPY
+import david.demo.common.SupportedCurrencyPairs.AUD_USD
+import david.demo.common.SupportedCurrencyPairs.EUR_USD
+import david.demo.common.SupportedCurrencyPairs.GBP_USD
+import david.demo.common.SupportedCurrencyPairs.USD_CAD
+import david.demo.common.SupportedCurrencyPairs.USD_JPY
+import david.demo.common.SupportedSources.BARCLAYS
+import david.demo.common.SupportedSources.CITI
+import david.demo.common.SupportedSources.DBS
+import david.demo.common.SupportedSources.REUTERS
+import david.demo.common.SupportedSources.UOB
+import david.demo.common.round3
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -36,8 +37,8 @@ class PriceQuoteGenerator(timestampDistributionOffset: Long = 1) {
             val quote = quotes[idx]
             quote.source = source
             quote.symbol = symbol
-            quote.bidPrice = bidAskPair.bid
-            quote.askPrice = bidAskPair.ask
+            quote.bidPrice = bidAskPair.bid.round3()
+            quote.askPrice = bidAskPair.ask.round3()
             quote.timestampMS = LocalDateTime.parse(timestampRandomizer.randomize(), DataLoader.dtf).toInstant(ZoneOffset.UTC).toEpochMilli()
         }
         return quotes

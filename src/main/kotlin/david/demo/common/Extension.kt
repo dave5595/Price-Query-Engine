@@ -1,7 +1,7 @@
+@file:JvmName("Utils")
+
 package david.demo.common
 
-import david.demo.core.Side
-import david.demo.core.SidedPrice
 import david.demo.data.DataLoader
 import david.demo.data.PriceQuote
 import java.io.*
@@ -9,13 +9,17 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.function.Predicate
 
+@JvmOverloads
 fun String.padBothSides(totalWidth: Int, paddingChar: Char = ' '): String {
     val padding = totalWidth - this.length
     val leftPadding = padding / 2
     val rightPadding = padding - leftPadding
     return paddingChar.toString().repeat(leftPadding) + this + paddingChar.toString().repeat(rightPadding)
+}
+
+fun String.trimAllSpaces(): String {
+    return replace("\\s+".toRegex(), "")
 }
 
 fun Double.round(precision: Int): Double {
@@ -26,6 +30,7 @@ fun Double.round3(): Double {
     return Maths.round(this, 3)
 }
 
+@JvmOverloads
 fun formatToString(
     timestampMS: Long,
     dtf: DateTimeFormatter = DataLoader.dtf
@@ -49,10 +54,5 @@ fun Array<PriceQuote>.toCsv(filePath: String) {
     } catch (e: IOException) {
         e.printStackTrace()
     }
-}
-
-fun <T> Predicate<T>?.getOrDefault(): Predicate<T> {
-    if (this != null) return this
-    return Predicate<T> { true }
 }
 

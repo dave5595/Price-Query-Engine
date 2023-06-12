@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -28,5 +29,13 @@ class DataLoaderTest {
             quotes.forEach(::println)
         }
         File(pathName).delete()
+    }
+
+    @Test
+    fun shouldConvertBackToTheSameDateString(){
+        val date = "20230516093124342"
+        val dateInMS = LocalDateTime.parse(date, DataLoader.dtf).toInstant(ZoneOffset.UTC).toEpochMilli()
+        val formattedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateInMS), ZoneOffset.UTC).format(DataLoader.dtf)
+        assertThat(date).isEqualTo(formattedDate)
     }
 }

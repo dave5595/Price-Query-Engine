@@ -11,9 +11,11 @@ import java.time.format.DateTimeFormatter
 class DataLoader {
 
     companion object {
-        const val DATE_TIME_PATTERN: String = "yyyyMMddHHmmssSSS"
+        private const val DATE_TIME_PATTERN: String = "yyyyMMddHHmmssSSS"
+        @JvmField
         val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)
 
+        @JvmStatic
         fun fromCsv(filepath: String): List<PriceQuote> {
             return try {
                 Files.loadFrom(filepath, Companion::toPriceQuotes)

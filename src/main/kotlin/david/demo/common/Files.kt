@@ -8,6 +8,7 @@ import kotlin.jvm.Throws
 
 class Files {
     companion object {
+        @JvmStatic
         @Throws(IOException::class)
         fun <T> loadFrom(filePath: String, transform: (BufferedReader)-> T): T {
             return try {
@@ -19,6 +20,5 @@ class Files {
                 throw e
             }
         }
-
     }
 }
