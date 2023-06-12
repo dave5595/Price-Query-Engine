@@ -1,11 +1,8 @@
-import david.demo.common.round
-import david.demo.common.round3
 import david.demo.core.InputParser
 import david.demo.core.InputParser.Companion.SEMI_COLON_SEPARATED_QUERIES_WITH_VALUES_SEPARATED_BY_COMMA_REGEX
 import david.demo.core.InputParser.Companion.toQueryStringList
 import david.demo.core.PredicateBuilder
 import david.demo.core.RawQuery
-import david.demo.core.SidedPrice
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -88,11 +85,12 @@ class InputParserTest {
 
 
     @Test
-    fun priceValueValidatorShouldAllowDecimalsOrIntegersOnly() {
+    fun priceValueValidatorShouldAllowPositiveDecimalsOrIntegersOnly() {
         assertThat(RawQuery.Key.Price.valueValidator.matches("0.987213")).isTrue
         assertThat(RawQuery.Key.Price.valueValidator.matches("87")).isTrue
         assertThat(RawQuery.Key.Price.valueValidator.matches("$9.8")).isFalse
         assertThat(RawQuery.Key.Price.valueValidator.matches(".987213")).isFalse
+        assertThat(RawQuery.Key.Price.valueValidator.matches("-100.97")).isFalse
         assertThat(RawQuery.Key.Price.valueValidator.matches("0.987213usd")).isFalse
         assertThat(RawQuery.Key.Price.valueValidator.matches("1dollar")).isFalse
     }
@@ -153,7 +151,6 @@ class InputParserTest {
     companion object {
         private val parser = InputParser()
     }
-
 }
 
 
