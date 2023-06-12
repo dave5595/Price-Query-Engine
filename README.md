@@ -17,7 +17,7 @@ The engine assumes the following about the input data:
 
 1. The timestamp provided conforms to the fixed pattern of `yyyyMMddHHmmssSSS`.
 2. The query string will only contain `;` to separate queries and `,` to separate multiple values in a single query.
-3. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to side price averages instead of the total price average. For example, prices will be compared to their side averages `((bidPx - bidAvgPx)/bidAvgPx) * 100`.
+3. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. For example, `bidPx > avgBidPx` and `askPx > avgAskPx`.
 
 ## Features
 
