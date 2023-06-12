@@ -13,9 +13,16 @@ Query engine that supports high-level string query filtering.
 
 ## How to Run the Tests
 
-To run the tests, follow these steps:
+Open the terminal and run the following command: `./gradlew test`. 
 
-1. Run the following command in the terminal: `./gradlew test`. Alternatively, you can use IntelliJ's Gradle taskbar to run the tests.
+Alternatively, you can use IntelliJ's Gradle taskbar to run the tests.
+
+To run tests using IntelliJ's Gradle taskbar:
+
+1. View the Gradle tool window (View > Tool Windows > Gradle).
+2. Expand the Gradle tasks.
+3. Expand the `verification` group.
+4. Click on `test` to start the task 
 
 These are the location of the test files:
 
@@ -29,8 +36,9 @@ These are the location of the test files:
 The engine assumes the following about the input data:
 
 1. The timestamp provided conforms to the fixed pattern of `yyyyMMddHHmmssSSS`.
-2. The query string will only contain `;` to separate queries and `,` to separate multiple values in a single query.
-3. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. For example, the percentage off the average price for a bid sided price is calculated using the following formula `((bidPx - avgBidPx) / avgBidPx) * 100` and similarly for percentage off the average price for an ask sided price is calculated using `((askPx - avgAskPx) / avgAskPx) * 100`.
+2. The input file containing price quotes should be in csv format
+3. The query string will only contain `;` to separate queries and `,` to separate multiple values in a single query.
+4. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. For example, the percentage off the average price for a bid sided price is calculated using the following formula `((bidPx - avgBidPx) / avgBidPx) * 100` and similarly for percentage off the average price for an ask sided price is calculated using `((askPx - avgAskPx) / avgAskPx) * 100`.
 
 ## Features
 

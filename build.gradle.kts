@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("java")
     kotlin("jvm") version "1.7.20"
+    id("com.adarshr.test-logger") version "3.2.0"
 }
 
 group = "david.demo"
@@ -15,6 +16,11 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.24.2")
+}
+
+testlogger{
+    showStandardStreams = true
+
 }
 
 tasks.test {
