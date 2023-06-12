@@ -3,6 +3,7 @@ import david.demo.common.SupportedCurrencyPairs.EUR_USD
 import david.demo.common.SupportedCurrencyPairs.USD_CAD
 import david.demo.common.SupportedCurrencyPairs.USD_JPY
 import david.demo.common.toCsv
+import david.demo.core.Output
 import david.demo.core.SidedPrice
 import david.demo.core.SimplePriceQueryEngine
 import david.demo.data.PriceQuote
@@ -14,6 +15,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.function.Function
+
 /**
  *  Filter prices for input symbol
  *  Filter outliers that are more than x% off the average.
@@ -34,13 +36,32 @@ class SimplePriceQueryEngineTest {
         File(inputPath).delete()
     }
 
+    @Test
+    fun outputBidAndAskShouldBeSortedInDescGivenAnUnsortedListO() {
+        val nowMS = System.currentTimeMillis()
+        val priceQuotes = listOf(
+            PriceQuote.byCiti(EUR_USD, 1.06, 1.068, nowMS), //-1.395% , -0.928%
+            PriceQuote.byReuters(EUR_USD, 1.056, 1.065, nowMS - 5), //-1.767%, -1.206%
+            PriceQuote.byDbs(EUR_USD, 1.057, 1.058, nowMS - 10), //-1.674%, -1.855%
+            PriceQuote.byDbs(EUR_USD, 1.056, 1.057, nowMS - 15), // -1.767%, -1.948%
+            PriceQuote.byDbs(EUR_USD, 1.059, 1.061, nowMS - 20), // -1.488%, -1.577%
+            PriceQuote.byReuters(EUR_USD, 1.065, 1.066, nowMS - 50), //-0.93%, -1.113%
+            PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
+            PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
+        )
+        val priceList = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
+        val output = Output(priceList)
+        assertThat(output.bids).isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
+        assertThat(output.asks).isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
+    }
+
     /**
      * Application only supports:
      * conjunction queries where x >= lower bound AND x <=upper bound
      * disjunction queries. e.g x <= lower bound OR x >= upper bound is not supported atm
      * */
     @Test
-    fun shouldNotYieldExpectedResultsWhenProcessingDisjunctionQueries() {
+    fun shouldNotYieldExpectedResultsWhenProcessingDisjunctiveQueries() {
         val nowMS = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
 
         //avgBidPx = 1.075
@@ -70,20 +91,15 @@ class SimplePriceQueryEngineTest {
                     .map(Function { it.price })
                     .containsOnly(1.183, 1.061, 1.056, 1.057, 1.057, 1.058, 1.056)
 
-                assertThat(result.asks)
-                    .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-                    .hasSize(3)
-
-                assertThat(result.bids)
-                    .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-                    .hasSize(4)
+                assertThat(result.asks).hasSize(3)
+                assertThat(result.bids).hasSize(4)
             }
 
         println(result)
     }
 
     @Test
-    fun shouldYieldExpectedResultsWhenProcessingConjunctionQueries() {
+    fun shouldYieldExpectedResultsWhenProcessingConjunctiveQueries() {
         val nowMS = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
 
         //avgBidPx = 1.075
@@ -110,16 +126,10 @@ class SimplePriceQueryEngineTest {
 
         assertThatCollection(result.prices)
             .map(Function { it.price })
-            .containsOnly(1.186, 1.061, 1.062,1.065, 1.066,1.059,1.068,1.06)
+            .containsOnly(1.186, 1.061, 1.062, 1.065, 1.066, 1.059, 1.068, 1.06)
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(5)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(4)
-
+        assertThat(result.asks).hasSize(5)
+        assertThat(result.bids).hasSize(4)
         println(result)
     }
 
@@ -139,13 +149,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.source })
             .containsOnly("citi", "reuters")
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(3)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(3)
+        assertThat(result.asks).hasSize(3)
+        assertThat(result.bids).hasSize(3)
         println(result)
     }
 
@@ -169,18 +174,13 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.symbol })
             .containsOnly("USDJPY")
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(3)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(3)
+        assertThat(result.asks).hasSize(3)
+        assertThat(result.bids).hasSize(3)
         println(result)
     }
 
     @Test
-    fun shouldHandlePriceConjunctionQuerySortingResultsInDescOrder() {
+    fun shouldHandlePriceConjunctiveQuerySortingResultsInDescOrder() {
         val now = System.currentTimeMillis()
         val priceQuotes = listOf(
             PriceQuote.byCiti(EUR_USD, 1.06, 1.07, now),
@@ -199,13 +199,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.price })
             .allMatch { it > 2.5 && it <= 3 }
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(3)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(5)
+        assertThat(result.asks).hasSize(3)
+        assertThat(result.bids).hasSize(5)
         println(result)
     }
 
@@ -240,13 +235,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.price })
             .containsOnly(3.859, 3.959, 2.956, 3.957)
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(2)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(2)
+        assertThat(result.asks).hasSize(2)
+        assertThat(result.bids).hasSize(2)
         println(result)
     }
 
@@ -255,7 +245,7 @@ class SimplePriceQueryEngineTest {
     // when age query be applied where age <= 50ms;
     // then filtered age should be [1686486764230, 1686486764231]
     @Test
-    fun shouldHandleAgeConjunctionQuerySortingResultsInDescOrder() {
+    fun shouldHandleAgeConjunctiveQuerySortingResultsInDescOrder() {
         val nowMS = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
         val priceQuotes = listOf(
             PriceQuote.byCiti(EUR_USD, 1.06, 1.07, nowMS),
@@ -285,13 +275,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.price })
             .containsOnly(2.956, 3.000, 2.957, 3.958, 2.93, 2.94, 2.941, 3.942)
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(4)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(4)
+        assertThat(result.asks).hasSize(4)
+        assertThat(result.bids).hasSize(4)
         println(result)
     }
 
@@ -328,13 +313,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.price })
             .containsOnly(1.183, 1.186)
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(1)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(1)
+        assertThat(result.asks).hasSize(1)
+        assertThat(result.bids).hasSize(1)
         println(result)
     }
 
@@ -368,13 +348,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.price })
             .containsOnly(1.183)
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(0)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(1)
+        assertThat(result.asks).hasSize(0)
+        assertThat(result.bids).hasSize(1)
         println(result)
     }
 
@@ -401,13 +376,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.source })
             .containsOnly("citi", "reuters", "barclays")
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(4)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(4)
+        assertThat(result.asks).hasSize(4)
+        assertThat(result.bids).hasSize(4)
         println(result)
     }
 
@@ -434,13 +404,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.source })
             .containsOnly("dbs", "reuters", "barclays")
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(2)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(6)
+        assertThat(result.asks).hasSize(2)
+        assertThat(result.bids).hasSize(6)
         println(result)
     }
 
@@ -467,13 +432,8 @@ class SimplePriceQueryEngineTest {
             .map(Function { it.source })
             .containsOnly("dbs", "barclays")
 
-        assertThat(result.asks)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(1)
-
-        assertThat(result.bids)
-            .isSortedAccordingTo(Comparator.comparingDouble(SidedPrice::price).reversed())
-            .hasSize(5)
+        assertThat(result.asks).hasSize(1)
+        assertThat(result.bids).hasSize(5)
         println(result)
     }
 }

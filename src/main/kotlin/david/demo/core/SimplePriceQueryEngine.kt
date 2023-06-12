@@ -10,17 +10,13 @@ import java.util.function.Supplier
 
 
 /**
- * Thread-safe Implementation of QueryEngine
- *  Filter prices for input symbol
- *  Filter outliers that are more than x% off the average.
- *  Filter prices that are more than X milli-seconds old (time stamp &gt; now - X)
- *  Filter based on source system.
+ * Thread-safe implementation of QueryEngine
  * */
 class SimplePriceQueryEngine @JvmOverloads constructor(
     priceQuotes: List<PriceQuote> = emptyList(),
     private val outputType: Output.Type = Output.Type.CSV
 ) : QueryEngine<String, Output> {
-    private val parser = InputParser()
+    private val inputParser: InputParser = InputParser()
     private var priceList: MutableList<SidedPrice> = CopyOnWriteArrayList()
     private var timeProvider: Supplier<Long>? = null
     private var avgBidPx: AtomicReference<Double> = AtomicReference(-1.0)
@@ -35,14 +31,14 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
     }
 
     override fun apply(query: String): Output {
-        val rawQueries: List<RawQuery> = parser.parse(query)
+        val rawQueries: List<RawQuery> = inputParser.parse(query)
         val predicate: Predicate<SidedPrice> = PredicateBuilder.build(rawQueries, timeProvider)
         return priceList.apply(predicate, outputType)
     }
 
     fun parseCsv(pathname: String): List<PriceQuote> {
-        val priceQuotes = DataLoader.fromCsv(pathname)
-        val newPrices = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
+        val priceQuotes: List<PriceQuote> = DataLoader.fromCsv(pathname)
+        val newPrices: List<SidedPrice> = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
         updatePriceList(newPrices)
         return priceQuotes
     }
@@ -52,7 +48,7 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
     }
 
     fun acceptAll(priceQuotes: Array<PriceQuote>) {
-        val sidedPrices = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
+        val sidedPrices: List<SidedPrice> = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
         updatePriceList(sidedPrices)
     }
 
@@ -84,7 +80,7 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
             predicate: Predicate<SidedPrice>,
             outputType: Output.Type = Output.Type.Table
         ): Output {
-            val result = filter(predicate::test)
+            val result: List<SidedPrice> = filter(predicate::test)
             return Output(result, outputType)
         }
 

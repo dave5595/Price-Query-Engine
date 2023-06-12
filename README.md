@@ -38,10 +38,11 @@ The engine assumes the following about the input data:
     - Example: `source = citi,dbs,reuters; symbol = EURUSD, USDJPY`
 2. Supports repeating groups to perform conjunctive queries:
     - Example: `source = citi; age > 10ms; age <= 100ms`
-3. Supports outputting results in Table or CSV form.
+3. Supports outputting results in Table or CSV format.
 4. Supports input validation on the query string.
 5. Supports the generation of input PriceQuotes programmatically.
 6. Supports specifying a TimeProvider for Age queries for testing purposes.
+7. Thread-safe implementation of `QueryEngine` with `SimplePriceQueryEngine`    
 
 ## Limitations
 
