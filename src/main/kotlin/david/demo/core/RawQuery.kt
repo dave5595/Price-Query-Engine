@@ -6,8 +6,6 @@ import david.demo.common.SupportedComparators.greaterOrEquals
 import david.demo.common.SupportedComparators.lesser
 import david.demo.common.SupportedComparators.lesserOrEquals
 import david.demo.common.round3
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.function.Predicate
 import java.util.function.Supplier
 
@@ -71,9 +69,8 @@ open class RawQuery(val key: Key, val comparator: String, val values: Array<Stri
 
             override fun apply(rawQuery: RawQuery, predicate: Predicate<SidedPrice>): Predicate<SidedPrice> {
                 val timeProvider = (rawQuery as ByAge).timeProvider
-                val now = timeProvider?.get() ?: LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
-                val queryTimestamp = now - dropSuffixIfExist(rawQuery.values[0]).toLong()
-                return predicate.and(ageQuery(rawQuery.comparator, queryTimestamp))
+                val queriedAge = dropSuffixIfExist(rawQuery.values[0]).toLong()
+                return predicate.and(ageQuery(rawQuery.comparator, queriedAge, timeProvider))
             }
 
             override fun toRawQuery(comparator: String, values: Array<String>): RawQuery {
@@ -91,14 +88,15 @@ open class RawQuery(val key: Key, val comparator: String, val values: Array<Stri
 
             private fun ageQuery(
                 comparator: String,
-                queryTimestamp: Long
+                queriedAge: Long,
+                timeProvider: Supplier<Long>? = null
             ): Predicate<SidedPrice> {
                 return when (comparator) {
-                    greater -> Predicate { price -> queryTimestamp > price.timestampMS }
-                    lesser -> Predicate { price -> queryTimestamp < price.timestampMS }
-                    greaterOrEquals -> Predicate { price -> queryTimestamp >= price.timestampMS }
-                    lesserOrEquals -> Predicate { price -> queryTimestamp <= price.timestampMS }
-                    equals -> Predicate { price -> queryTimestamp == price.timestampMS }
+                    greater -> Predicate { price -> price.age(timeProvider) > queriedAge }
+                    lesser -> Predicate { price -> price.age(timeProvider) < queriedAge }
+                    greaterOrEquals -> Predicate { price -> price.age(timeProvider) >= queriedAge }
+                    lesserOrEquals -> Predicate { price -> price.age(timeProvider) <= queriedAge }
+                    equals -> Predicate { price -> price.age(timeProvider) == queriedAge }
                     else -> throw IllegalArgumentException("Unsupported comparator of $comparator")
                 }
             }
@@ -148,29 +146,27 @@ open class RawQuery(val key: Key, val comparator: String, val values: Array<Stri
                 return value.dropLast(1)
             }
 
-            private fun pctFromAvgPxQuery(rawQuery: RawQuery): Predicate<SidedPrice> {
-                return rawQuery.values
-                    .map(::dropSuffixIfExist)
-                    .fold(Predicate<SidedPrice> { false }) { predicate: Predicate<SidedPrice>, value: String ->
-                        combinePctFromAvgPxMatchers(
-                            rawQuery.comparator,
-                            predicate,
-                            value.toDouble().round3()
-                        )
-                    }
+            override fun isMultiValueSupported(): Boolean {
+                return false
             }
 
-            private fun combinePctFromAvgPxMatchers(
+            private fun pctFromAvgPxQuery(rawQuery: RawQuery): Predicate<SidedPrice> {
+                return pctFromAvgPxMatchers(
+                    rawQuery.comparator,
+                    dropSuffixIfExist(rawQuery.values[0]).toDouble().round3()
+                )
+            }
+
+            private fun pctFromAvgPxMatchers(
                 comparator: String,
-                predicate: Predicate<SidedPrice>,
                 value: Double
             ): Predicate<SidedPrice> {
                 return when (comparator) {
-                    greater -> predicate.or { it.pctOffAvgPx!! > value }
-                    lesser -> predicate.or { it.pctOffAvgPx!! < value }
-                    greaterOrEquals -> predicate.or { it.pctOffAvgPx!! >= value }
-                    lesserOrEquals -> predicate.or { it.pctOffAvgPx!! <= value }
-                    equals -> predicate.or { it.pctOffAvgPx!! == value }
+                    greater -> Predicate { it.pctOffAvgPx!! > value }
+                    lesser -> Predicate { it.pctOffAvgPx!! < value }
+                    greaterOrEquals -> Predicate { it.pctOffAvgPx!! >= value }
+                    lesserOrEquals -> Predicate { it.pctOffAvgPx!! <= value }
+                    equals -> Predicate { it.pctOffAvgPx!! == value }
                     else -> throw IllegalArgumentException("Unsupported comparator of $comparator")
                 }
             }

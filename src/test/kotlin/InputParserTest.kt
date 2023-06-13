@@ -143,8 +143,12 @@ class InputParserTest {
             .withMessage("Multi value querying by Age is not permitted")
         Assertions
             .assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { PredicateBuilder.build(parser.parse("SOURCE=reuters;symbol=EURUSD;pctOffAvgPx>=10%,-10%;price<=0.98,10;age<=100,10ms")) }
+            .isThrownBy { PredicateBuilder.build(parser.parse("SOURCE=reuters;symbol=EURUSD;price<=0.98,10;age<=100,10ms")) }
             .withMessage("Multi value querying by Price is not permitted")
+        Assertions
+            .assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy { PredicateBuilder.build(parser.parse("SOURCE=reuters;symbol=EURUSD;pctOffAvgPx>=10%,-10%")) }
+            .withMessage("Multi value querying by PctOffAvgPx is not permitted")
     }
 
 

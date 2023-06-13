@@ -8,7 +8,6 @@ import david.demo.core.SidedPrice
 import david.demo.core.SimplePriceQueryEngine
 import david.demo.data.PriceQuote
 import david.demo.data.PriceQuoteGenerator
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -221,7 +220,7 @@ class SimplePriceQueryEngineTest {
         val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
         val result = priceQueryEngine
             .withTimeProvider { nowMS }
-            .apply("age >= 50ms")
+            .apply("age >= 50ms; age < 101")
 
         assertThatCollection(result.prices)
             .map(Function { it.source })
