@@ -1,7 +1,7 @@
-import david.demo.common.SupportedCurrencyPairs.AUD_USD
-import david.demo.common.SupportedCurrencyPairs.EUR_USD
-import david.demo.common.SupportedCurrencyPairs.USD_CAD
-import david.demo.common.SupportedCurrencyPairs.USD_JPY
+import david.demo.common.SampleCurrencyPairs.AUD_USD
+import david.demo.common.SampleCurrencyPairs.EUR_USD
+import david.demo.common.SampleCurrencyPairs.USD_CAD
+import david.demo.common.SampleCurrencyPairs.USD_JPY
 import david.demo.common.toCsv
 import david.demo.core.Output
 import david.demo.core.SidedPrice

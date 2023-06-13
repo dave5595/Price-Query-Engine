@@ -1,6 +1,6 @@
 package david.demo.common
 
-object SupportedSources{
+object SampleSources{
     const val REUTERS = "reuters"
     const val DBS = "dbs"
     const val CITI = "citi"

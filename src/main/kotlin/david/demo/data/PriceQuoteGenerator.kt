@@ -1,19 +1,18 @@
 package david.demo.data
 
-import david.demo.common.SupportedCurrencyPairs.AUD_USD
-import david.demo.common.SupportedCurrencyPairs.EUR_USD
-import david.demo.common.SupportedCurrencyPairs.GBP_USD
-import david.demo.common.SupportedCurrencyPairs.USD_CAD
-import david.demo.common.SupportedCurrencyPairs.USD_JPY
-import david.demo.common.SupportedSources.BARCLAYS
-import david.demo.common.SupportedSources.CITI
-import david.demo.common.SupportedSources.DBS
-import david.demo.common.SupportedSources.REUTERS
-import david.demo.common.SupportedSources.UOB
+import david.demo.common.SampleCurrencyPairs.AUD_USD
+import david.demo.common.SampleCurrencyPairs.EUR_USD
+import david.demo.common.SampleCurrencyPairs.GBP_USD
+import david.demo.common.SampleCurrencyPairs.USD_CAD
+import david.demo.common.SampleCurrencyPairs.USD_JPY
+import david.demo.common.SampleSources.BARCLAYS
+import david.demo.common.SampleSources.CITI
+import david.demo.common.SampleSources.DBS
+import david.demo.common.SampleSources.REUTERS
+import david.demo.common.SampleSources.UOB
 import david.demo.common.round3
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class PriceQuoteGenerator(timestampDistributionOffset: Long = 1) {

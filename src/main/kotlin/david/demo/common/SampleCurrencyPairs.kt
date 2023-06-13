@@ -1,6 +1,6 @@
 package david.demo.common
 
-object SupportedCurrencyPairs{
+object SampleCurrencyPairs{
     const val EUR_USD = "EURUSD"
     const val GBP_USD = "GBPUSD"
     const val USD_JPY = "USDJPY"
