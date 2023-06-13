@@ -47,8 +47,9 @@ The engine assumes the following about the input data and logic expected:
 1. The timestamp provided conforms to the fixed pattern of `yyyyMMddHHmmssSSS`.
 2. The input file containing price quotes should be in csv format
 3. The query string will only contain `;` to separate queries and `,` to separate multiple values in a single query.
-4. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average.
-   Therefore, the percentage off the average price for a bid `SidedPrice` is calculated using the following formula `((bidPx - avgBidPx) / avgBidPx) * 100` instead of `((bidPx - totalAvgPx) / avgBidPx) * 100`
+4. The average price mentioned in the statement "Filter outliers that are more than x% off the average" refers to sided price averages instead of the total price average. </br>
+   >**Note**  
+   The percentage off the average price for a bid `SidedPrice` is calculated using the following formula `((bidPx - avgBidPx) / avgBidPx) * 100` instead of `((bidPx - totalAvgPx) / avgBidPx) * 100`
    and similarly for percentage off the average price for an ask `SidedPrice` is calculated using `((askPx - avgAskPx) / avgAskPx) * 100` instead of `((askPx - totalAvgPx) / avgBidPx) * 100`.
 
 ## Features
@@ -61,7 +62,7 @@ The engine assumes the following about the input data and logic expected:
 4. Supports input validation on the query string.
 5. Supports the generation of input `PriceQuote`'s programmatically.
 6. Supports specifying a TimeProvider for Age queries for testing purposes.
-7. Provides Thread-safe implementation of `QueryEngine` with `SimplePriceQueryEngine`
+7. Provides thread-safe implementation of `QueryEngine` with `SimplePriceQueryEngine`
 
 ## Limitations
 
