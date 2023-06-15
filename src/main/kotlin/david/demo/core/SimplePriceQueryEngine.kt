@@ -14,11 +14,11 @@ import java.util.function.Supplier
  * */
 class SimplePriceQueryEngine @JvmOverloads constructor(
     priceQuotes: List<PriceQuote> = emptyList(),
+    private val timeProvider: Supplier<Long>? = null,
     private val outputType: Output.Type = Output.Type.CSV
 ) : QueryEngine<String, Output> {
     private val inputParser: InputParser = InputParser()
     private var priceList: MutableList<SidedPrice> = CopyOnWriteArrayList()
-    private var timeProvider: Supplier<Long>? = null
     private var avgBidPx: AtomicReference<Double> = AtomicReference(-1.0)
     private var avgAskPx: AtomicReference<Double> = AtomicReference(-1.0)
     private var recalcLock: Any = Any()
@@ -43,10 +43,6 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
         return priceQuotes
     }
 
-    fun withTimeProvider(timeProvider: Supplier<Long>): SimplePriceQueryEngine = apply {
-        this.timeProvider = timeProvider
-    }
-
     fun acceptAll(priceQuotes: Array<PriceQuote>) {
         val sidedPrices: List<SidedPrice> = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
         updatePriceList(sidedPrices)
@@ -67,8 +63,8 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
         synchronized(recalcLock) {
             for (sp in this) {
                 sp.pctOffAvgPx = when (sp.side) {
-                    Side.Bid -> SidedPrice.percentageOffAvgPx(sp.price, avgBidPx.get())
-                    Side.Ask -> SidedPrice.percentageOffAvgPx(sp.price, avgAskPx.get())
+                    Side.Bid -> percentageOffAvgPx(sp.price, avgBidPx.get())
+                    Side.Ask -> percentageOffAvgPx(sp.price, avgAskPx.get())
                     else -> throw IllegalArgumentException("Side of ${sp.side} is unsupported")
                 }
             }
@@ -82,6 +78,12 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
         ): Output {
             val result: List<SidedPrice> = filter(predicate::test)
             return Output(result, outputType)
+        }
+
+        private fun percentageOffAvgPx(price: Double, avgPrice: Double): Double {
+            val pxDeviation = price - avgPrice
+            val percentageDeviation = pxDeviation / avgPrice
+            return (percentageDeviation * 100).round3()
         }
 
         private fun List<SidedPrice>.averagePx(side: Side): Double {

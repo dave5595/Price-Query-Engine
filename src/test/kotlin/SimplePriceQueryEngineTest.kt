@@ -75,10 +75,9 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
             PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes = priceQuotes, timeProvider = { nowMS })
 
         val result = priceQueryEngine
-            .withTimeProvider { nowMS }
             .apply("pctOffAvgPx < -1.5;pctOffAvgPx >= 10.0195")
         assertThatExceptionOfType(AssertionError::class.java)
             .isThrownBy {
@@ -113,11 +112,10 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
             PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
         //values< -1.2 || values >5%
         //values> -1.2 && values <5%
         val result = priceQueryEngine
-            .withTimeProvider { nowMS }
             .apply("pctOffAvgPx > -1.5 ; pctOffAvgPx <= 10.0195; ")
         assertThatCollection(result.prices)
             .map(Function { it.source })
@@ -217,9 +215,8 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(USD_JPY, 2.94, 3.95, nowMS - 49),
             PriceQuote.byBarclays(EUR_USD, 2.956, 3.957, nowMS - 100),
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
         val result = priceQueryEngine
-            .withTimeProvider { nowMS }
             .apply("age >= 50ms; age < 101")
 
         assertThatCollection(result.prices)
@@ -256,9 +253,8 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(USD_JPY, 2.941, 3.942, nowMS - 49),
             PriceQuote.byBarclays(EUR_USD, 2.956, 3.957, nowMS - 100),
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
         val result = priceQueryEngine
-            .withTimeProvider { nowMS }
             .apply("age > 5ms; age < 50ms")
         //values< -1.2 || values >5%
         //values> -1.2 && values <5%
@@ -333,10 +329,9 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
             PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes)
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
 
         val result = priceQueryEngine
-            .withTimeProvider { nowMS }
             .apply("pctOffAvgPx >= 10.0195%; age >=50 ")
 
         assertThatCollection(result.prices)
