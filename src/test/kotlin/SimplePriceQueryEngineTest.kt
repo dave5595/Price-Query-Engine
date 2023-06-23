@@ -112,7 +112,7 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
             PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, { nowMS })
         //values< -1.2 || values >5%
         //values> -1.2 && values <5%
         val result = priceQueryEngine
@@ -215,7 +215,7 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(USD_JPY, 2.94, 3.95, nowMS - 49),
             PriceQuote.byBarclays(EUR_USD, 2.956, 3.957, nowMS - 100),
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, { nowMS })
         val result = priceQueryEngine
             .apply("age >= 50ms; age < 101")
 
@@ -253,7 +253,7 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(USD_JPY, 2.941, 3.942, nowMS - 49),
             PriceQuote.byBarclays(EUR_USD, 2.956, 3.957, nowMS - 100),
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, { nowMS })
         val result = priceQueryEngine
             .apply("age > 5ms; age < 50ms")
         //values< -1.2 || values >5%
@@ -329,7 +329,7 @@ class SimplePriceQueryEngineTest {
             PriceQuote.byBarclays(EUR_USD, 1.061, 1.062, nowMS - 49), // -1.302%,-1.484%
             PriceQuote.byBarclays(EUR_USD, 1.183, 1.186, nowMS - 100), // 10.047%,10.019%
         )
-        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, {nowMS})
+        val priceQueryEngine = SimplePriceQueryEngine(priceQuotes, { nowMS })
 
         val result = priceQueryEngine
             .apply("pctOffAvgPx >= 10.0195%; age >=50 ")

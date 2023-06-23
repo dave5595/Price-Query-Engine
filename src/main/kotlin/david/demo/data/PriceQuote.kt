@@ -43,34 +43,42 @@ class PriceQuote {
         fun byDbs(symbol: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(DBS, symbol, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun byReuters(symbol: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(REUTERS, symbol, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun byUob(symbol: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(UOB, symbol, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun byBarclays(symbol: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(BARCLAYS, symbol, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun eur_usd(source: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(source, EUR_USD, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun usd_jpy(source: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(source, USD_JPY, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun usd_cad(source: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(source, USD_CAD, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun aud_usd(source: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(source, AUD_USD, bidPrice, askPrice, timestampMS)
         }
+
         @JvmStatic
         fun gbp_usd(source: String, bidPrice: Double, askPrice: Double, timestampMS: Long): PriceQuote {
             return build(source, GBP_USD, bidPrice, askPrice, timestampMS)

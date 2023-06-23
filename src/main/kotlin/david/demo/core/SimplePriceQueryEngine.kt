@@ -38,13 +38,13 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
 
     fun parseCsv(pathname: String): List<PriceQuote> {
         val priceQuotes: List<PriceQuote> = DataLoader.fromCsv(pathname)
-        val newPrices: List<SidedPrice> = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
+        val newPrices: List<SidedPrice> = priceQuotes.asSequence().flatMap(PriceQuote::toSidedPriceList).toList()
         updatePriceList(newPrices)
         return priceQuotes
     }
 
     fun acceptAll(priceQuotes: Array<PriceQuote>) {
-        val sidedPrices: List<SidedPrice> = priceQuotes.flatMap(PriceQuote::toSidedPriceList)
+        val sidedPrices: List<SidedPrice> = priceQuotes.asSequence().flatMap(PriceQuote::toSidedPriceList).toList()
         updatePriceList(sidedPrices)
     }
 
@@ -61,13 +61,20 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
     private fun List<SidedPrice>.recalcPctOffAvgPx() {
         recalcSidedAvgPx()
         synchronized(recalcLock) {
-            for (sp in this) {
-                sp.pctOffAvgPx = when (sp.side) {
-                    Side.Bid -> percentageOffAvgPx(sp.price, avgBidPx.get())
-                    Side.Ask -> percentageOffAvgPx(sp.price, avgAskPx.get())
-                    else -> throw IllegalArgumentException("Side of ${sp.side} is unsupported")
-                }
-            }
+            priceList = asSequence().map(::updatePctOffAvgPx).toMutableList()
+        }
+    }
+
+    private fun updatePctOffAvgPx(sp: SidedPrice): SidedPrice {
+        val updatedPctOffAvgPx = when (sp.side) {
+            Side.Bid -> percentageOffAvgPx(sp.price, avgBidPx.get())
+            Side.Ask -> percentageOffAvgPx(sp.price, avgAskPx.get())
+            else -> throw IllegalArgumentException("Side of ${sp.side} is unsupported")
+        }
+        return if (sp.pctOffAvgPx != updatedPctOffAvgPx) {
+            sp.copy(pctOffAvgPx = updatedPctOffAvgPx)
+        } else {
+            sp
         }
     }
 
@@ -76,7 +83,7 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
             predicate: Predicate<SidedPrice>,
             outputType: Output.Type = Output.Type.Table
         ): Output {
-            val result: List<SidedPrice> = filter(predicate::test)
+            val result: List<SidedPrice> = asSequence().filter(predicate::test).toList()
             return Output(result, outputType)
         }
 
@@ -87,7 +94,11 @@ class SimplePriceQueryEngine @JvmOverloads constructor(
         }
 
         private fun List<SidedPrice>.averagePx(side: Side): Double {
-            return filter { it.side == side }.map { it.price }.average().round3()
+            return asSequence()
+                .filter { it.side == side }
+                .map { it.price }
+                .average()
+                .round3()
         }
     }
 }

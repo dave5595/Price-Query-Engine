@@ -10,7 +10,7 @@ data class SidedPrice @JvmOverloads constructor(
     val side: Side,
     val price: Double,
     val timestampMS: Long,
-    var pctOffAvgPx: Double? = null
+    val pctOffAvgPx: Double? = null
 ) {
     fun age(timeProvider: Supplier<Long>? = null): Long {
         val now = timeProvider?.get() ?: LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli()
